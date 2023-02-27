@@ -1,0 +1,53 @@
+int inputPin1 = 2;
+int inputPin2 = 7;
+bool state = false;
+
+void setup()
+{
+  Serial.begin(9600);
+  pinMode(inputPin1, INPUT);
+  pinMode(inputPin2, INPUT);
+  
+  attachInterrupt(digitalPinToInterrupt(inputPin1), switches1, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(inputPin2), switches2, CHANGE);
+}
+
+void loop()
+{
+  delay(500);
+}
+
+void switches1()
+{
+  state = !state;
+  digitalWrite(4, state);
+  Serial.println("Interrupt detected");
+}
+
+void switches2()
+{
+  long duration, inches;
+  pinMode(inputPin2, OUTPUT);
+  digitalWrite(inputPin2, LOW);
+  delayMicroseconds(2);
+  digitalWrite(inputPin2, HIGH);
+  delayMicroseconds(5);
+  digitalWrite(inputPin2, LOW);
+  
+  pinMode(inputPin2, INPUT);
+  duration = pulseIn(inputPin2, HIGH);
+  
+  inches = microsecondsToInches(duration);
+  
+  if(inches > 28)
+  {
+    state = !state;
+    digitalWrite(4, state);
+    Serial.println("Interrupt detected");
+  }
+  
+
+}
+long microsecondsToInches(long microseconds) {
+  return microseconds / 74 / 2;
+}
